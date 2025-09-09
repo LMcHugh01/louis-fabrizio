@@ -1,9 +1,11 @@
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import BookPage from './pages/BookPage'
+import NewRecipePage from './pages/NewRecipePage'
 import RecipePage from './pages/RecipePage'
 import AboutPage from './pages/AboutPage'
 import { Routes, Route } from 'react-router-dom'
+import EditRecipePage from './pages/EditRecipePage'
 
 function App() {
   return (
@@ -12,11 +14,14 @@ function App() {
       <div className="pages">
         <Routes>
           <Route path="/" element={<BookPage />} />
-          <Route path="/recipes/:Meal_ID" element={<RecipePage />} />
+          <Route path="/recipes/:mealId" element={<RecipePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/new-recipe" element={<NewRecipePage />} />
+          <Route path="/recipes/:mealId/edit" element={<EditRecipePage />} />
         </Routes>
         <Footer />
       </div>
+
     </>
   )
 }

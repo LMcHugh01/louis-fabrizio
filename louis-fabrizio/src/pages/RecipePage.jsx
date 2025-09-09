@@ -1,18 +1,63 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+
 function RecipePage() {
-  const { Meal_ID, Meal_Name } = useParams();
+  const { mealId } = useParams();
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+
+  useEffect(() => {
+    fetch("/recipes.json")
+      .then((res) => res.json())
+      .then((builtin) => {
+        const raw = localStorage.getItem("userRecipes");
+        const user = raw ? JSON.parse(raw) : [];
+        setRecipes([...(builtin || []), ...user]);
+        setLoading(false);
+      })
+      .catch(() => {
+        const raw = localStorage.getItem("userRecipes");
+        const user = raw ? JSON.parse(raw) : [];
+        setRecipes(user);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <h1>Loading…</h1>;
+
+  const recipe = recipes.find((r) => r.Meal_ID === mealId);
+
+  if (!recipe) return <h1>Recipe not found</h1>;
 
   return (
-    <>
-      <Link to="/">Back to Home</Link>
-      <h1>Recipe for {Meal_Name}</h1>
-      <Link to={`/recipes/${Meal_ID}/edit`} className="recipeCardEdit">
-        Edit
-      </Link>
-    </>
+    <div>
+      <div  className='recipe-heading'>
+        <h1 className='title'>{recipe.Meal_Name}</h1>
+        <Link to={`/recipes/${recipe.Meal_ID}/edit`}>
+          <img 
+          src="/edit-icon.png" 
+          alt="edit"
+          className="edit-icon-img"
+          />
+        </Link>
+      </div>
+      <ul>
+        {recipe.Ingredients.map((ing, i) => (
+          <li key={i}>
+            {ing.Ingredient_Name}
+            {ing.Weight_g ? ` (${ing.Weight_g}g)` : ""}
+          </li>
+        ))}
+      </ul>
+
+      <div className="recipe-page-nav">
+        <Link to="/">← Back to all recipes</Link>
+      </div>
+    </div>
   );
 }
 
 export default RecipePage;
-
